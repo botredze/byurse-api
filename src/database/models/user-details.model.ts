@@ -1,6 +1,6 @@
 import { Model, Column, DataType, Table, ForeignKey, HasMany } from "sequelize-typescript";
 import { ApiProperty } from '@nestjs/swagger';
-import { User } from './user.model';
+import { User } from "./user.model";
 import { Address } from "./address.model";
 
 @Table

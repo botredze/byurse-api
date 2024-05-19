@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from '@nestjs/sequelize';
-import { UserDetails } from "./entity/user-details.model";
 import { UserDetailsDto } from "./dto/user-details.dto";
+import { UserDetails } from "../database/models/user-details.model";
 
 @Injectable()
 export class UserDetailsRepository {

@@ -1,7 +1,7 @@
 import { AddressDto } from "./dto/address.dto";
-import { Address } from "./entity/address.model";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/sequelize";
+import { Address } from "../database/models/address.model";
 
 @Injectable()
 export class AddressRepository{

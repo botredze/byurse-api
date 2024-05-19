@@ -5,11 +5,11 @@ import { AuthController } from './auth.controller';
 import { UsersController } from './users.controller';
 import { UserRepository } from './user.repository';
 import { OtpService } from '../otp/otp.service';
-import { Address } from './entity/address.model';
-import { UserDetails } from './entity/user-details.model';
-import { User } from './entity/user.model';
 import { UserDetailsRepository } from "./user.details.repository";
 import { AddressRepository } from "./address.repository";
+import { Address } from "../database/models/address.model";
+import { UserDetails } from "../database/models/user-details.model";
+import { User } from "../database/models/user.model";
 
 @Module({
   imports: [

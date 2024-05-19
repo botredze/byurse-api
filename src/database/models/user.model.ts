@@ -1,6 +1,8 @@
-import { Model, Column, DataType, Table, HasOne } from 'sequelize-typescript';
-import { UserDetails } from './user-details.model';
+import { Model, Column, DataType, Table, HasOne, HasMany } from "sequelize-typescript";
 import { ApiProperty } from '@nestjs/swagger';
+import { UserDetails } from "./user-details.model";
+import { Basket } from "./basket.model";
+import { ViewUserHistory } from "./view-user-history.model";
 
 @Table
 export class User extends Model<User> {
@@ -30,4 +32,11 @@ export class User extends Model<User> {
   @ApiProperty({ type: UserDetails })
   @HasOne(() => UserDetails)
   userDetails: UserDetails;
+
+
+  @HasMany(() => Basket)
+  baskets: Basket[];
+
+  @HasMany(() => ViewUserHistory)
+  viewHistory: ViewUserHistory[];
 }

@@ -1,6 +1,6 @@
 import { Model, Column, DataType, Table, ForeignKey } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
-import { UserDetails } from './user-details.model';
+import { UserDetails } from "./user-details.model";
 
 @Table
 export class Address extends Model<Address> {
@@ -11,7 +11,7 @@ export class Address extends Model<Address> {
     primaryKey: true,
   })
   id: number;
-
+ß
   @ApiProperty({ example: 1 })
   @ForeignKey(() => UserDetails)
   @Column({
