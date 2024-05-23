@@ -6,8 +6,11 @@ import { Rating } from './rating.model';
 import { ProductDetails } from './product-details.model';
 import { SpColorPalitry } from './sp-color-palitry.model';
 import { SpSizeRate } from './sp-size-rate.model';
-import { BasketItem } from "./basket-item.model";
-import { ViewUserHistory } from "./view-user-history.model";
+import { BasketItem } from './basket-item.model';
+import { ViewUserHistory } from './view-user-history.model';
+import { ProductColor } from "./product-color.model";
+import { ProductSize } from "./product-size.model";
+import { ProductRecommendation } from "./product-recommendations.model";
 
 @Table({ tableName: 'products' })
 export class Product extends Model<Product> {
@@ -59,15 +62,18 @@ export class Product extends Model<Product> {
   @HasOne(() => ProductDetails)
   productDetails: ProductDetails;
 
-  @HasMany(() => SpColorPalitry)
-  colors: SpColorPalitry[];
-
-  @HasMany(() => SpSizeRate)
-  sizes: SpSizeRate[];
-
   @HasMany(() => BasketItem)
   basketItems: BasketItem[];
 
   @HasMany(() => ViewUserHistory)
   viewHistories: ViewUserHistory[];
+
+  @HasMany(()=> ProductColor)
+  colors: ProductColor[]
+
+  @HasMany(()=>ProductSize)
+  sizes: ProductSize[]
+
+  @HasMany(()=>ProductRecommendation)
+  recommendations: ProductRecommendation[]
 }

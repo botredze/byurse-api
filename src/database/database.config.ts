@@ -17,6 +17,9 @@ import { User } from "./models/user.model";
 import { Basket } from "./models/basket.model";
 import { BasketItem } from "./models/basket-item.model";
 import { ViewUserHistory } from "./models/view-user-history.model";
+import { ProductRecommendation } from "./models/product-recommendations.model";
+import { ProductSize } from "./models/product-size.model";
+import { ProductColor } from "./models/product-color.model";
 
 @Module({
   imports: [
@@ -38,7 +41,7 @@ import { ViewUserHistory } from "./models/view-user-history.model";
       },
       autoLoadModels: true,
       synchronize: true,
-      models: [Product, SpGender, SpBrand, Category, Rating, ProductDetails, SpColorPalitry, SpSizeRate, Address, UserDetails, User, Basket, BasketItem, ViewUserHistory],
+      models: [Product, SpGender, SpBrand, Category, Rating, ProductDetails, SpColorPalitry, SpSizeRate, Address, UserDetails, User, Basket, BasketItem, ViewUserHistory, ProductRecommendation, ProductDetails, ProductSize, ProductColor],
     }),
   ],
 })

@@ -10,23 +10,12 @@ import { ErrorResponseDto } from './dto/error-response.dto';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  @ApiOperation({ summary: 'Create a new product' })
-  @ApiResponse({ status: 201, description: 'The product has been successfully created.', type: Product })
-  @ApiResponse({ status: 400, description: 'Bad Request', type: ErrorResponseDto })
-  @ApiResponse({ status: 500, description: 'Internal Server Error', type: ErrorResponseDto })
   @Post()
-  async create(@Body() createProductDto: CreateProductDto) {
-    try {
-      return await this.productsService.create(createProductDto);
-    } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
-      throw new HttpException({
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: 'Internal server error',
-      }, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+  @ApiOperation({ summary: 'Create a new product' })
+  @ApiResponse({ status: 201, description: 'The product has been successfully created.' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  async createProduct(@Body() createProductDto: CreateProductDto): Promise<Product> {
+    return this.productsService.createProduct(createProductDto);
   }
 
   @ApiOperation({ summary: 'Get all products' })

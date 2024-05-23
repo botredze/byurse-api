@@ -1,36 +1,85 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsNumber, IsBoolean, IsNotEmpty, IsArray, ValidateNested, IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
+
+class CreateProductDetailsDto {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  description: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  material: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  country: string;
+}
 
 export class CreateProductDto {
   @ApiProperty()
-  readonly productName: string;
+  @IsString()
+  @IsNotEmpty()
+  productName: string;
 
   @ApiProperty()
-  readonly price: number;
+  @IsNumber()
+  @IsNotEmpty()
+  price: number;
 
   @ApiProperty()
-  readonly oldPrice?: number;
+  @IsNumber()
+  oldPrice: number;
 
   @ApiProperty()
-  readonly discount?: number;
+  @IsNumber()
+  discount: number;
 
   @ApiProperty()
-  readonly discountActive?: boolean;
+  @IsBoolean()
+  discountActive: boolean;
 
   @ApiProperty()
-  readonly position: number;
+  @IsNumber()
+  @IsNotEmpty()
+  position: number;
 
   @ApiProperty()
-  readonly genderId: number;
+  @IsNumber()
+  @IsNotEmpty()
+  genderId: number;
 
   @ApiProperty()
-  readonly brandId: number;
+  @IsNumber()
+  @IsNotEmpty()
+  brandId: number;
 
   @ApiProperty()
-  readonly categoryId: number;
+  @IsNumber()
+  @IsNotEmpty()
+  categoryId: number;
 
-  @ApiProperty({ type: [Number] })
-  readonly colors: number[];
+  @ApiProperty({ type: [Number], description: 'Array of color IDs' })
+  @IsArray()
+  @IsOptional()
+  colors?: number[];
 
-  @ApiProperty({ type: [Number] })
-  readonly sizes: number[];
+  @ApiProperty({ type: [Number], description: 'Array of size IDs' })
+  @IsArray()
+  @IsOptional()
+  sizes?: number[];
+
+  @ApiProperty({ type: [Number], description: 'Array of recommended product IDs' })
+  @IsArray()
+  @IsOptional()
+  recommendations?: number[];
+
+  @ApiProperty({ type: CreateProductDetailsDto, description: 'Product details' })
+  @ValidateNested()
+  @Type(() => CreateProductDetailsDto)
+  @IsNotEmpty()
+  details: CreateProductDetailsDto;
 }

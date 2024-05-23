@@ -20,4 +20,6 @@ export class BasketItem extends Model<BasketItem> {
 
   @BelongsTo(() => Basket)
   basket: Basket;
+
+
 }

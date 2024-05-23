@@ -1,4 +1,4 @@
-import { Column, Model, Table, DataType } from 'sequelize-typescript';
+import { Table, Column, Model, DataType } from 'sequelize-typescript';
 
 @Table({ tableName: 'sp_gender' })
 export class SpGender extends Model<SpGender> {
