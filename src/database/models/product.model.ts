@@ -1,4 +1,13 @@
-import { Column, Model, Table, DataType, ForeignKey, BelongsTo, HasOne, HasMany } from 'sequelize-typescript';
+import {
+  Column,
+  Model,
+  Table,
+  DataType,
+  ForeignKey,
+  BelongsTo,
+  HasOne,
+  HasMany,
+} from 'sequelize-typescript';
 import { SpGender } from './sp-gender.model';
 import { SpBrand } from './sp-brand.model';
 import { Category } from './category.model';
@@ -8,9 +17,9 @@ import { SpColorPalitry } from './sp-color-palitry.model';
 import { SpSizeRate } from './sp-size-rate.model';
 import { BasketItem } from './basket-item.model';
 import { ViewUserHistory } from './view-user-history.model';
-import { ProductColor } from "./product-color.model";
-import { ProductSize } from "./product-size.model";
-import { ProductRecommendation } from "./product-recommendations.model";
+import { ProductColor } from './product-color.model';
+import { ProductSize } from './product-size.model';
+import { ProductRecommendation } from './product-recommendations.model';
 
 @Table({ tableName: 'products' })
 export class Product extends Model<Product> {
@@ -68,12 +77,12 @@ export class Product extends Model<Product> {
   @HasMany(() => ViewUserHistory)
   viewHistories: ViewUserHistory[];
 
-  @HasMany(()=> ProductColor)
-  colors: ProductColor[]
+  @HasMany(() => ProductColor)
+  colors: ProductColor[];
 
-  @HasMany(()=>ProductSize)
-  sizes: ProductSize[]
+  @HasMany(() => ProductSize)
+  sizes: ProductSize[];
 
-  @HasMany(()=>ProductRecommendation)
-  recommendations: ProductRecommendation[]
+  @HasMany(() => ProductRecommendation)
+  recommendations: ProductRecommendation[];
 }

@@ -1,14 +1,20 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { InjectModel } from '@nestjs/sequelize';
+import {
+  Injectable,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
+import {
+  InjectModel
+} from '@nestjs/sequelize';
 import { Product } from '../database/models/product.model';
 import { CreateProductDto } from './dto/create-product.dto';
 import { Category } from '../database/models/category.model';
 import { SpBrand } from '../database/models/sp-brand.model';
 import { ProductColor } from '../database/models/product-color.model';
 import { ProductSize } from '../database/models/product-size.model';
-import { ProductRecommendation } from "../database/models/product-recommendations.model";
-import { Op } from "sequelize";
-import { ProductDetails } from "../database/models/product-details.model";
+import { ProductRecommendation } from '../database/models/product-recommendations.model';
+import { Op } from 'sequelize';
+import { ProductDetails } from '../database/models/product-details.model';
 
 @Injectable()
 export class ProductsService {
@@ -19,7 +25,6 @@ export class ProductsService {
     @InjectModel(ProductDetails) private readonly productDetailsModel: typeof ProductDetails,
     @InjectModel(ProductRecommendation) private readonly productRecommendationModel: typeof ProductRecommendation,
   ) {}
-
 
   async createProduct(data: CreateProductDto): Promise<Product> {
     const { colors, sizes, recommendations, details, ...productData } = data;
@@ -69,35 +74,36 @@ export class ProductsService {
       include: [Category, SpBrand, ProductColor, ProductSize, ProductRecommendation],
     });
   }
+
   async findByFilter(filters: any): Promise<Product[]> {
     try {
       const { genderId, categoryId, sizeId, colorId, priceMin, priceMax, collectionName } = filters;
 
-      const where = {};
+      const where: any = {};
 
       if (genderId) {
-        where['genderId'] = genderId;
+        where.genderId = genderId;
       }
 
       if (categoryId) {
-        where['categoryId'] = categoryId;
+        where.categoryId = categoryId;
       }
 
       if (sizeId) {
-        where['$productSizes.sizeId$'] = sizeId;
+        where['$sizes.sizeId$'] = sizeId;
       }
 
       if (colorId) {
-        where['$productColors.colorId$'] = colorId;
+        where['$colors.colorId$'] = colorId;
       }
 
       if (priceMin || priceMax) {
-        where['price'] = {};
+        where.price = {};
         if (priceMin) {
-          where['price'][Op.gte] = priceMin;
+          where.price[Op.gte] = priceMin;
         }
         if (priceMax) {
-          where['price'][Op.lte] = priceMax;
+          where.price[Op.lte] = priceMax;
         }
       }
 
@@ -110,8 +116,8 @@ export class ProductsService {
         include: [
           { association: 'category' },
           { association: 'gender' },
-          { association: 'productSizes' },
-          { association: 'productColors' },
+          { association: 'sizes' },
+          { association: 'colors' },
           { association: 'brand' },
         ],
       });
@@ -119,5 +125,4 @@ export class ProductsService {
       throw new HttpException('Internal Server Error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-
 }

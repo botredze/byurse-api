@@ -11,7 +11,7 @@ export class Address extends Model<Address> {
     primaryKey: true,
   })
   id: number;
-ß
+
   @ApiProperty({ example: 1 })
   @ForeignKey(() => UserDetails)
   @Column({
