@@ -8,6 +8,9 @@ import { ProductColor } from "../database/models/product-color.model";
 import { ProductSize } from "../database/models/product-size.model";
 import { ProductRecommendation } from "../database/models/product-recommendations.model";
 import { ProductDetails } from "../database/models/product-details.model";
+import { ProductPhoto } from "../database/models/product-photo.model";
+import { S3Service } from "../s3/s3.service";
+import { S3Module } from "../s3/s3.module";
 
 
 @Module({
@@ -20,7 +23,9 @@ import { ProductDetails } from "../database/models/product-details.model";
       ProductSize,
       ProductRecommendation,
       ProductDetails,
+      ProductPhoto
     ]),
+    S3Module
   ],
   controllers: [ProductsController],
   providers: [ProductsService],

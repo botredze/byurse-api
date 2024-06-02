@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNumber, IsBoolean, IsNotEmpty, IsArray, ValidateNested, IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
+import { STRING } from "sequelize";
 
 class CreateProductDetailsDto {
   @ApiProperty()
@@ -82,4 +83,7 @@ export class CreateProductDto {
   @Type(() => CreateProductDetailsDto)
   @IsNotEmpty()
   details: CreateProductDetailsDto;
+
+  @ApiProperty({ type: [String], example: ['photo1.jpg', 'photo2.jpg'] })
+  photos?: string[];
 }

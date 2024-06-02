@@ -13,13 +13,12 @@ import { SpBrand } from './sp-brand.model';
 import { Category } from './category.model';
 import { Rating } from './rating.model';
 import { ProductDetails } from './product-details.model';
-import { SpColorPalitry } from './sp-color-palitry.model';
-import { SpSizeRate } from './sp-size-rate.model';
 import { BasketItem } from './basket-item.model';
 import { ViewUserHistory } from './view-user-history.model';
 import { ProductColor } from './product-color.model';
 import { ProductSize } from './product-size.model';
 import { ProductRecommendation } from './product-recommendations.model';
+import { ProductPhoto } from './product-photo.model';
 
 @Table({ tableName: 'products' })
 export class Product extends Model<Product> {
@@ -85,4 +84,7 @@ export class Product extends Model<Product> {
 
   @HasMany(() => ProductRecommendation)
   recommendations: ProductRecommendation[];
+
+  @HasMany(() => ProductPhoto)
+  photos: ProductPhoto[];
 }

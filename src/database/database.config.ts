@@ -20,6 +20,7 @@ import { ViewUserHistory } from "./models/view-user-history.model";
 import { ProductRecommendation } from "./models/product-recommendations.model";
 import { ProductSize } from "./models/product-size.model";
 import { ProductColor } from "./models/product-color.model";
+import { ProductPhoto } from "./models/product-photo.model";
 
 @Module({
   imports: [
@@ -41,7 +42,7 @@ import { ProductColor } from "./models/product-color.model";
       },
       autoLoadModels: true,
       synchronize: true,
-      models: [Product, SpGender, SpBrand, Category, Rating, ProductDetails, SpColorPalitry, SpSizeRate, Address, UserDetails, User, Basket, BasketItem, ViewUserHistory, ProductRecommendation, ProductDetails, ProductSize, ProductColor],
+      models: [Product, SpGender, SpBrand, Category, Rating, ProductDetails, SpColorPalitry, SpSizeRate, Address, UserDetails, User, Basket, BasketItem, ViewUserHistory, ProductRecommendation, ProductDetails, ProductSize, ProductColor, ProductPhoto],
     }),
   ],
 })

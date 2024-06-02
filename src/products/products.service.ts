@@ -1,11 +1,5 @@
-import {
-  Injectable,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
-import {
-  InjectModel
-} from '@nestjs/sequelize';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { InjectModel } from '@nestjs/sequelize';
 import { Product } from '../database/models/product.model';
 import { CreateProductDto } from './dto/create-product.dto';
 import { Category } from '../database/models/category.model';
@@ -15,6 +9,8 @@ import { ProductSize } from '../database/models/product-size.model';
 import { ProductRecommendation } from '../database/models/product-recommendations.model';
 import { Op } from 'sequelize';
 import { ProductDetails } from '../database/models/product-details.model';
+import { ProductPhoto } from '../database/models/product-photo.model';
+import { S3Service } from '../s3/s3.service';
 
 @Injectable()
 export class ProductsService {
@@ -24,10 +20,12 @@ export class ProductsService {
     @InjectModel(ProductSize) private readonly productSizeModel: typeof ProductSize,
     @InjectModel(ProductDetails) private readonly productDetailsModel: typeof ProductDetails,
     @InjectModel(ProductRecommendation) private readonly productRecommendationModel: typeof ProductRecommendation,
+    @InjectModel(ProductPhoto) private readonly productPhotoModel: typeof ProductPhoto,
+    private readonly s3Service: S3Service,
   ) {}
 
-  async createProduct(data: CreateProductDto): Promise<Product> {
-    const { colors, sizes, recommendations, details, ...productData } = data;
+  async createProduct(data: CreateProductDto, files: Express.Multer.File[]): Promise<Product> {
+    const { colors, sizes, recommendations, details, photos, ...productData } = data;
 
     try {
       const product = await this.productModel.create(productData);
@@ -57,6 +55,26 @@ export class ProductsService {
         );
       }
 
+      if (files && files.length > 0) {
+        const photoUploads = await Promise.all(files.map(file =>
+          this.s3Service.uploadFile(file, '188f78bd-byurse-bucket', `products/${product.id}/${file.originalname}`)
+        ));
+
+        await this.productPhotoModel.bulkCreate(
+          photoUploads.map(url => ({
+            productId: product.id,
+            url,
+          }))
+        );
+      } else if (photos && photos.length > 0) {
+        await this.productPhotoModel.bulkCreate(
+          photos.map(url => ({
+            productId: product.id,
+            url,
+          }))
+        );
+      }
+
       return product;
     } catch (error) {
       throw new HttpException('Failed to create product', HttpStatus.INTERNAL_SERVER_ERROR);
@@ -65,13 +83,13 @@ export class ProductsService {
 
   findAll() {
     return this.productModel.findAll({
-      include: [Category, SpBrand, ProductColor, ProductSize, ProductRecommendation],
+      include: [Category, SpBrand, ProductColor, ProductSize, ProductRecommendation, ProductPhoto],
     });
   }
 
   findOne(id: number) {
     return this.productModel.findByPk(id, {
-      include: [Category, SpBrand, ProductColor, ProductSize, ProductRecommendation],
+      include: [Category, SpBrand, ProductColor, ProductSize, ProductRecommendation, ProductPhoto],
     });
   }
 
@@ -119,6 +137,7 @@ export class ProductsService {
           { association: 'sizes' },
           { association: 'colors' },
           { association: 'brand' },
+          { association: 'photos' },
         ],
       });
     } catch (error) {

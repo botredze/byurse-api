@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import * as twilio from 'twilio';
-import * as dotenv from 'dotenv';
+import { SmsAero, SmsAeroError, SmsAeroHTTPError } from 'smsaero';
 import { UserRepository } from "../users/user.repository";
+import * as dotenv from 'dotenv';
 dotenv.config();
 
 @Injectable()
 export class OtpService {
-  private readonly twilioClient: any;
+  private readonly smsAeroClient: SmsAero;
 
   constructor(
     private readonly userRepository: UserRepository,
   ) {
-    this.twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+    this.smsAeroClient = new SmsAero(process.env.SMSAERO_EMAIL, process.env.SMSAERO_API_KEY);
   }
 
   async generateAndSendOTP(phone: string) : Promise<void> {
@@ -29,13 +29,15 @@ export class OtpService {
 
   async sendOTP(phoneNumber: string, otp: string): Promise<void> {
     try {
-      await this.twilioClient.messages.create({
-        body: `Your OTP is: ${otp}`,
-        from: process.env.TWILIO_PHONE_NUMBER,
-        to: phoneNumber
-      });
+      await this.smsAeroClient.send(phoneNumber, `Ваш код для входа в Byurse: ${otp} n/n/ введите в поле в окне регистрации`);
     } catch (error) {
-      throw new Error('Error sending OTP');
+      if (error instanceof SmsAeroError) {
+        throw new Error(`SmsAero error: ${error.message}`);
+      } else if (error instanceof SmsAeroHTTPError) {
+        throw new Error(`HTTP error: ${error.message}`);
+      } else {
+        throw new Error(`Unknown error: ${error}`);
+      }
     }
   }
 
