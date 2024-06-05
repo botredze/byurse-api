@@ -8,4 +8,7 @@ export class SpSizeRate extends Model<SpSizeRate> {
 
   @Column({ type: DataType.STRING, allowNull: false })
   sizeName: string;
+
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  size_type: number;
 }
