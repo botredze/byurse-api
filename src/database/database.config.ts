@@ -34,12 +34,12 @@ import { ProductPhoto } from "./models/product-photo.model";
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      dialectOptions: {
-        ssl: {
-          rejectUnauthorized: true,
-          ca: fs.readFileSync(path.resolve(__dirname, '..', '..', 'ca-certificate.crt')).toString(),
-        },
-      },
+      // dialectOptions: {
+      //   ssl: {
+      //     rejectUnauthorized: true,
+      //     ca: fs.readFileSync(path.resolve(__dirname, '..', '..', 'ca-certificate.crt')).toString(),
+      //   },
+      // },
       autoLoadModels: true,
       synchronize: true,
       models: [Product, SpGender, SpBrand, Category, Rating, ProductDetails, SpColorPalitry, SpSizeRate, Address, UserDetails, User, Basket, BasketItem, ViewUserHistory, ProductRecommendation, ProductDetails, ProductSize, ProductColor, ProductPhoto],
