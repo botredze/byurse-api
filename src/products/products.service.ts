@@ -134,11 +134,6 @@ export class ProductsService {
     try {
       const { genderId, categoryId, sizeId, colorId, priceMin, priceMax, collectionId } = filters;
 
-      if (collectionId == 2) {
-        console.log();
-        return this.findAll();
-      }
-
       const where: any = {};
 
       if (genderId != 0 && genderId) {
@@ -167,7 +162,7 @@ export class ProductsService {
         }
       }
 
-      if (collectionId != 0 && collectionId) {
+      if (collectionId != 0 && collectionId && collectionId != 2) {
         where.brandId = collectionId;
       }
 
@@ -203,6 +198,7 @@ export class ProductsService {
       throw new HttpException("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
 
 
 }
