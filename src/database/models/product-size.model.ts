@@ -1,4 +1,4 @@
-import { Column, Model, Table, DataType, ForeignKey } from 'sequelize-typescript';
+import { Column, Model, Table, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
 import { Product } from './product.model';
 import { SpSizeRate } from './sp-size-rate.model';
 
@@ -14,4 +14,7 @@ export class ProductSize extends Model<ProductSize> {
   @ForeignKey(() => SpSizeRate)
   @Column({ type: DataType.INTEGER, allowNull: false })
   sizeId: number;
+
+  @BelongsTo(() => SpSizeRate)
+  size: SpSizeRate;
 }

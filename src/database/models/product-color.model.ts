@@ -1,4 +1,4 @@
-import { Column, Model, Table, DataType, ForeignKey } from 'sequelize-typescript';
+import { Column, Model, Table, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
 import { Product } from './product.model';
 import { SpColorPalitry } from './sp-color-palitry.model';
 
@@ -14,4 +14,7 @@ export class ProductColor extends Model<ProductColor> {
   @ForeignKey(() => SpColorPalitry)
   @Column({ type: DataType.INTEGER, allowNull: false })
   colorId: number;
+
+  @BelongsTo(() => SpColorPalitry)
+  color: SpColorPalitry;
 }

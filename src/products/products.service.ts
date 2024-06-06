@@ -11,6 +11,8 @@ import { Op } from 'sequelize';
 import { ProductDetails } from '../database/models/product-details.model';
 import { ProductPhoto } from '../database/models/product-photo.model';
 import { S3Service } from '../s3/s3.service';
+import { SpColorPalitry } from "../database/models/sp-color-palitry.model";
+import { SpSizeRate } from "../database/models/sp-size-rate.model";
 
 @Injectable()
 export class ProductsService {
@@ -83,13 +85,27 @@ export class ProductsService {
 
   findAll() {
     return this.productModel.findAll({
-      include: [Category, SpBrand, ProductColor, ProductSize, ProductRecommendation, ProductPhoto],
+      include: [
+        Category,
+        SpBrand,
+        { model: ProductColor, include: [SpColorPalitry] },
+        { model: ProductSize, include: [SpSizeRate] },
+        ProductRecommendation,
+        ProductPhoto,
+      ],
     });
   }
 
   findOne(id: number) {
     return this.productModel.findByPk(id, {
-      include: [Category, SpBrand, ProductColor, ProductSize, ProductRecommendation, ProductPhoto],
+      include: [
+        Category,
+        SpBrand,
+        { model: ProductColor, include: [SpColorPalitry] },
+        { model: ProductSize, include: [SpSizeRate] },
+        ProductRecommendation,
+        ProductPhoto,
+      ],
     });
   }
 
@@ -134,8 +150,8 @@ export class ProductsService {
         include: [
           { association: 'category' },
           { association: 'gender' },
-          { association: 'sizes' },
-          { association: 'colors' },
+          { association: 'sizes', include: [SpSizeRate] },
+          { association: 'colors', include: [SpColorPalitry] },
           { association: 'brand' },
           { association: 'photos' },
         ],
@@ -145,3 +161,5 @@ export class ProductsService {
     }
   }
 }
+
+

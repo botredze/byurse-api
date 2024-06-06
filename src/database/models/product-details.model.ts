@@ -18,4 +18,7 @@ export class ProductDetails extends Model<ProductDetails> {
 
   @Column({ type: DataType.STRING, allowNull: false })
   country: string;
+
+  @Column({ type: DataType.STRING, allowNull: false })
+  articul: string;
 }
