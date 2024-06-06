@@ -1,19 +1,19 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { InjectModel } from '@nestjs/sequelize';
-import { Product } from '../database/models/product.model';
-import { CreateProductDto } from './dto/create-product.dto';
-import { Category } from '../database/models/category.model';
-import { SpBrand } from '../database/models/sp-brand.model';
-import { ProductColor } from '../database/models/product-color.model';
-import { ProductSize } from '../database/models/product-size.model';
-import { ProductRecommendation } from '../database/models/product-recommendations.model';
-import { Op } from 'sequelize';
-import { ProductDetails } from '../database/models/product-details.model';
-import { ProductPhoto } from '../database/models/product-photo.model';
-import { S3Service } from '../s3/s3.service';
+import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
+import { InjectModel } from "@nestjs/sequelize";
+import { Product } from "../database/models/product.model";
+import { CreateProductDto } from "./dto/create-product.dto";
+import { Category } from "../database/models/category.model";
+import { SpBrand } from "../database/models/sp-brand.model";
+import { ProductColor } from "../database/models/product-color.model";
+import { ProductSize } from "../database/models/product-size.model";
+import { ProductRecommendation } from "../database/models/product-recommendations.model";
+import { Op } from "sequelize";
+import { ProductDetails } from "../database/models/product-details.model";
+import { ProductPhoto } from "../database/models/product-photo.model";
+import { S3Service } from "../s3/s3.service";
 import { SpColorPalitry } from "../database/models/sp-color-palitry.model";
 import { SpSizeRate } from "../database/models/sp-size-rate.model";
-import { plainToClass } from 'class-transformer';
+import { plainToClass } from "class-transformer";
 
 @Injectable()
 export class ProductsService {
@@ -24,8 +24,9 @@ export class ProductsService {
     @InjectModel(ProductDetails) private readonly productDetailsModel: typeof ProductDetails,
     @InjectModel(ProductRecommendation) private readonly productRecommendationModel: typeof ProductRecommendation,
     @InjectModel(ProductPhoto) private readonly productPhotoModel: typeof ProductPhoto,
-    private readonly s3Service: S3Service,
-  ) {}
+    private readonly s3Service: S3Service
+  ) {
+  }
 
   async createProduct(data: CreateProductDto, files: Express.Multer.File[]): Promise<Product> {
     const { colors, sizes, recommendations, details, photos, ...productData } = data;
@@ -53,34 +54,34 @@ export class ProductsService {
         await this.productRecommendationModel.bulkCreate(
           recommendations.map(recommendedProductId => ({
             productId: product.id,
-            recommendedProductId,
+            recommendedProductId
           }))
         );
       }
 
       if (files && files.length > 0) {
         const photoUploads = await Promise.all(files.map(file =>
-          this.s3Service.uploadFile(file, '188f78bd-byurse-bucket', `products/${product.id}/${file.originalname}`)
+          this.s3Service.uploadFile(file, "188f78bd-byurse-bucket", `products/${product.id}/${file.originalname}`)
         ));
 
         await this.productPhotoModel.bulkCreate(
           photoUploads.map(url => ({
             productId: product.id,
-            url,
+            url
           }))
         );
       } else if (photos && photos.length > 0) {
         await this.productPhotoModel.bulkCreate(
           photos.map(url => ({
             productId: product.id,
-            url,
+            url
           }))
         );
       }
 
       return product;
     } catch (error) {
-      throw new HttpException('Failed to create product', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException("Failed to create product", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -89,11 +90,11 @@ export class ProductsService {
       include: [
         Category,
         SpBrand,
-        ProductPhoto,
-      ],
+        ProductPhoto
+      ]
     }).then(products => {
       return products.map(product => ({
-        ...product.get(),
+        ...product.get()
       }));
     });
   }
@@ -106,29 +107,28 @@ export class ProductsService {
         SpBrand,
         {
           model: ProductColor,
-          attributes: ['colorId'],
-          include: [{ model: SpColorPalitry, attributes: ['id', 'color'] }]
+          attributes: ["colorId"],
+          include: [{ model: SpColorPalitry, attributes: ["id", "color"] }]
         },
         {
           model: ProductSize,
-          attributes: ['sizeId'],
-          include: [{ model: SpSizeRate, attributes: ['id', 'sizeName'] }]
+          attributes: ["sizeId"],
+          include: [{ model: SpSizeRate, attributes: ["id", "sizeName"] }]
         },
         ProductRecommendation,
-        ProductPhoto,
-      ],
+        ProductPhoto
+      ]
     }).then(product => {
       if (product) {
         return {
           ...product.get(),
           colors: product.colors.map(color => ({ id: color.colorId, color: color.color.color })),
-          sizes: product.sizes.map(size => ({ id: size.sizeId, sizeName: size.size.sizeName })),
+          sizes: product.sizes.map(size => ({ id: size.sizeId, sizeName: size.size.sizeName }))
         };
       }
       return null;
     });
   }
-
 
   async findByFilter(filters: any): Promise<any> {
     try {
@@ -145,11 +145,11 @@ export class ProductsService {
       }
 
       if (sizeId) {
-        where['$sizes.sizeId$'] = sizeId;
+        where["$sizes.sizeId$"] = sizeId;
       }
 
       if (colorId) {
-        where['$colors.colorId$'] = colorId;
+        where["$colors.colorId$"] = colorId;
       }
 
       if (priceMin || priceMax) {
@@ -163,40 +163,40 @@ export class ProductsService {
       }
 
       if (collectionId) {
-        where['$brand.collectionId$'] = collectionId;
+        where["$brand.collectionId$"] = collectionId;
       }
 
       const products = await Product.findAll({
         where,
         include: [
-          { association: 'category' },
-          { association: 'gender' },
+          { association: "category" },
+          { association: "gender" },
           {
             model: ProductSize,
-            attributes: ['sizeId'],
-            include: [{ model: SpSizeRate, attributes: ['id', 'sizeName'] }]
+            attributes: ["sizeId"],
+            include: [{ model: SpSizeRate, attributes: ["id", "sizeName"] }]
           },
           {
             model: ProductColor,
-            attributes: ['colorId'],
-            include: [{ model: SpColorPalitry, attributes: ['id', 'color'] }]
+            attributes: ["colorId"],
+            include: [{ model: SpColorPalitry, attributes: ["id", "color"] }]
           },
-          { association: 'brand' },
-          { association: 'photos' },
+          { association: "brand" },
+          { association: "photos" }
         ],
+        order: [["price", "ASC"]]
       });
 
       return products.map(product => ({
         ...product.get(),
         colors: product.colors.map(color => ({ id: color.colorId, color: color.color.color })),
-        sizes: product.sizes.map(size => ({ id: size.sizeId, sizeName: size.size.sizeName })),
+        sizes: product.sizes.map(size => ({ id: size.sizeId, sizeName: size.size.sizeName }))
       }));
 
     } catch (error) {
-      throw new HttpException('Internal Server Error', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-
 
 
 }
