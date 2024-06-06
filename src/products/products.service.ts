@@ -132,10 +132,10 @@ export class ProductsService {
 
   async findByFilter(filters: any): Promise<any> {
     try {
-      const { genderId, categoryId, sizeId, colorId, priceMin, priceMax, collectionId, collectionName } = filters;
+      const { genderId, categoryId, sizeId, colorId, priceMin, priceMax, collectionId } = filters;
 
-      // Если collectionName равно 2, возвращаем результат findAll
-      if (collectionName === 2) {
+      if (collectionId == 2) {
+        console.log();
         return this.findAll();
       }
 
@@ -171,7 +171,6 @@ export class ProductsService {
         where.brandId = collectionId;
       }
 
-      console.log(where);
       const products = await Product.findAll({
         where,
         include: [
