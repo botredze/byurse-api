@@ -148,7 +148,7 @@ export class ProductsService {
         where["$sizes.sizeId$"] = sizeId;
       }
 
-      if (colorId) {
+      if (colorId != 0) {
         where["$colors.colorId$"] = colorId;
       }
 
@@ -166,6 +166,7 @@ export class ProductsService {
         where["$brand.collectionId$"] = collectionId;
       }
 
+      console.log(where );
       const products = await Product.findAll({
         where,
         include: [
