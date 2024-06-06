@@ -136,15 +136,17 @@ export class ProductsService {
 
       const where: any = {};
 
-      if (genderId) {
+      if (genderId != 0) {
         where.genderId = genderId;
       }
 
-      if (categoryId) {
+      if (categoryId != 0 ) {
         where.categoryId = categoryId;
       }
 
-      if (sizeId) {
+      if (sizeId != 0 ) {
+        console.log(sizeId != 0 );
+        console.log('ХУЙУХЙХ  У', sizeId);
         where["$sizes.sizeId$"] = sizeId;
       }
 
@@ -152,7 +154,7 @@ export class ProductsService {
         where["$colors.colorId$"] = colorId;
       }
 
-      if (priceMin || priceMax) {
+      if (priceMin != 0 || priceMax != 0 ) {
         where.price = {};
         if (priceMin) {
           where.price[Op.gte] = priceMin;
