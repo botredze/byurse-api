@@ -136,6 +136,7 @@ export class ProductsService {
 
       const where: any = {};
 
+      console.log(genderId, categoryId, sizeId, colorId, priceMin, priceMax, collectionId);
       if (genderId != 0 && genderId) {
         where.genderId = genderId;
       }
@@ -194,7 +195,6 @@ export class ProductsService {
       }));
 
     } catch (error) {
-      console.log(error);
       throw new HttpException("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
