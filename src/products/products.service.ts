@@ -136,21 +136,19 @@ export class ProductsService {
 
       const where: any = {};
 
-      if (genderId != 0) {
+      if (genderId != 0 && genderId) {
         where.genderId = genderId;
       }
 
-      if (categoryId != 0 ) {
+      if (categoryId != 0 &&  categoryId) {
         where.categoryId = categoryId;
       }
 
-      if (sizeId != 0 ) {
-        console.log(sizeId != 0 );
-        console.log('ХУЙУХЙХ  У', sizeId);
+      if (sizeId != 0 &&  sizeId) {
         where["$sizes.sizeId$"] = sizeId;
       }
 
-      if (colorId != 0) {
+      if (colorId != 0 && colorId ) {
         where["$colors.colorId$"] = colorId;
       }
 
@@ -164,8 +162,8 @@ export class ProductsService {
         }
       }
 
-      if (collectionId) {
-        where["$brand.collectionId$"] = collectionId;
+      if (collectionId != 0 && collectionId) {
+        where.brandId = collectionId;
       }
 
       console.log(where );
@@ -197,6 +195,7 @@ export class ProductsService {
       }));
 
     } catch (error) {
+      console.log(error);
       throw new HttpException("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
