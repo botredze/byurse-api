@@ -21,6 +21,7 @@ import { ProductRecommendation } from "./models/product-recommendations.model";
 import { ProductSize } from "./models/product-size.model";
 import { ProductColor } from "./models/product-color.model";
 import { ProductPhoto } from "./models/product-photo.model";
+import { FavoriteProduct } from "./models/favorite.model";
 
 @Module({
   imports: [
@@ -42,7 +43,7 @@ import { ProductPhoto } from "./models/product-photo.model";
       // },
       autoLoadModels: true,
       synchronize: true,
-      models: [Product, SpGender, SpBrand, Category, Rating, ProductDetails, SpColorPalitry, SpSizeRate, Address, UserDetails, User, Basket, BasketItem, ViewUserHistory, ProductRecommendation, ProductDetails, ProductSize, ProductColor, ProductPhoto],
+      models: [Product, SpGender, SpBrand, Category, Rating, ProductDetails, SpColorPalitry, SpSizeRate, Address, UserDetails, User, Basket, BasketItem, ViewUserHistory, ProductRecommendation, ProductDetails, ProductSize, ProductColor, ProductPhoto, FavoriteProduct],
     }),
   ],
 })

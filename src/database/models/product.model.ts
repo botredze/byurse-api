@@ -6,8 +6,8 @@ import {
   ForeignKey,
   BelongsTo,
   HasOne,
-  HasMany,
-} from 'sequelize-typescript';
+  HasMany, BelongsToMany
+} from "sequelize-typescript";
 import { SpGender } from './sp-gender.model';
 import { SpBrand } from './sp-brand.model';
 import { Category } from './category.model';
@@ -19,6 +19,8 @@ import { ProductColor } from './product-color.model';
 import { ProductSize } from './product-size.model';
 import { ProductRecommendation } from './product-recommendations.model';
 import { ProductPhoto } from './product-photo.model';
+import { User } from "./user.model";
+import { FavoriteProduct } from "./favorite.model";
 
 @Table({ tableName: 'products' })
 export class Product extends Model<Product> {
@@ -87,4 +89,7 @@ export class Product extends Model<Product> {
 
   @HasMany(() => ProductPhoto)
   photos: ProductPhoto[];
+
+  @BelongsToMany(() => User, { through: { model: () => FavoriteProduct } })
+  favoritedByUsers: User[];
 }
