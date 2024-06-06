@@ -13,6 +13,7 @@ import { ProductPhoto } from '../database/models/product-photo.model';
 import { S3Service } from '../s3/s3.service';
 import { SpColorPalitry } from "../database/models/sp-color-palitry.model";
 import { SpSizeRate } from "../database/models/sp-size-rate.model";
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class ProductsService {
@@ -90,17 +91,23 @@ export class ProductsService {
         SpBrand,
         {
           model: ProductColor,
-          attributes: [],
-          include: [{ model: SpColorPalitry }]
+          attributes: ['colorId'], // Only fetch the colorId
+          include: [{ model: SpColorPalitry, attributes: ['color'] }]
         },
         {
           model: ProductSize,
-          attributes: [],
-          include: [{ model: SpSizeRate }]
+          attributes: ['sizeId'], // Only fetch the sizeId
+          include: [{ model: SpSizeRate, attributes: ['sizeName'] }]
         },
         ProductRecommendation,
         ProductPhoto,
       ],
+    }).then(products => {
+      return products.map(product => ({
+        ...product.get(),
+        colors: product.colors.map(color => color.color.color),
+        sizes: product.sizes.map(size => size.size.sizeName),
+      }));
     });
   }
 
@@ -111,22 +118,31 @@ export class ProductsService {
         SpBrand,
         {
           model: ProductColor,
-          attributes: [],
-          include: [{ model: SpColorPalitry }]
+          attributes: ['colorId'], // Only fetch the colorId
+          include: [{ model: SpColorPalitry, attributes: ['color'] }]
         },
         {
           model: ProductSize,
-          attributes: [],
-          include: [{ model: SpSizeRate }]
+          attributes: ['sizeId'], // Only fetch the sizeId
+          include: [{ model: SpSizeRate, attributes: ['sizeName'] }]
         },
         ProductRecommendation,
         ProductPhoto,
       ],
+    }).then(product => {
+      if (product) {
+        return {
+          ...product.get(),
+          colors: product.colors.map(color => color.color.color),
+          sizes: product.sizes.map(size => size.size.sizeName),
+        };
+      }
+      return null;
     });
   }
 
 
-  async findByFilter(filters: any): Promise<Product[]> {
+  async findByFilter(filters: any): Promise<any> {
     try {
       const { genderId, categoryId, sizeId, colorId, priceMin, priceMax, collectionName } = filters;
 
@@ -162,29 +178,36 @@ export class ProductsService {
         where['$brand.collectionName$'] = collectionName;
       }
 
-      return await this.productModel.findAll({
+      const products = await this.productModel.findAll({
         where,
         include: [
           { association: 'category' },
           { association: 'gender' },
           {
             model: ProductSize,
-            attributes: [],
-            include: [{ model: SpSizeRate }]
+            attributes: ['sizeId'], // Only fetch the sizeId
+            include: [{ model: SpSizeRate, attributes: ['sizeName'] }]
           },
           {
             model: ProductColor,
-            attributes: [],
-            include: [{ model: SpColorPalitry }]
+            attributes: ['colorId'], // Only fetch the colorId
+            include: [{ model: SpColorPalitry, attributes: ['color'] }]
           },
           { association: 'brand' },
           { association: 'photos' },
         ],
       });
+
+      return products.map(product => ({
+        ...product.get(),
+        colors: product.colors.map(color => color.color.color),
+        sizes: product.sizes.map(size => size.size.sizeName),
+      }));
     } catch (error) {
       throw new HttpException('Internal Server Error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
 
 }
 
