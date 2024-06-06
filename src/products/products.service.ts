@@ -88,8 +88,16 @@ export class ProductsService {
       include: [
         Category,
         SpBrand,
-        { model: ProductColor, include: [SpColorPalitry] },
-        { model: ProductSize, include: [SpSizeRate] },
+        {
+          model: ProductColor,
+          attributes: [],
+          include: [{ model: SpColorPalitry }]
+        },
+        {
+          model: ProductSize,
+          attributes: [],
+          include: [{ model: SpSizeRate }]
+        },
         ProductRecommendation,
         ProductPhoto,
       ],
@@ -101,13 +109,22 @@ export class ProductsService {
       include: [
         Category,
         SpBrand,
-        { model: ProductColor, include: [SpColorPalitry] },
-        { model: ProductSize, include: [SpSizeRate] },
+        {
+          model: ProductColor,
+          attributes: [],
+          include: [{ model: SpColorPalitry }]
+        },
+        {
+          model: ProductSize,
+          attributes: [],
+          include: [{ model: SpSizeRate }]
+        },
         ProductRecommendation,
         ProductPhoto,
       ],
     });
   }
+
 
   async findByFilter(filters: any): Promise<Product[]> {
     try {
@@ -150,8 +167,16 @@ export class ProductsService {
         include: [
           { association: 'category' },
           { association: 'gender' },
-          { association: 'sizes', include: [SpSizeRate] },
-          { association: 'colors', include: [SpColorPalitry] },
+          {
+            model: ProductSize,
+            attributes: [],
+            include: [{ model: SpSizeRate }]
+          },
+          {
+            model: ProductColor,
+            attributes: [],
+            include: [{ model: SpColorPalitry }]
+          },
           { association: 'brand' },
           { association: 'photos' },
         ],
@@ -160,6 +185,7 @@ export class ProductsService {
       throw new HttpException('Internal Server Error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
 }
 
 
