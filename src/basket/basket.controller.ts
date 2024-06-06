@@ -8,6 +8,7 @@ import { AddItemDto } from "./dto/add-item.dto";
 export class BasketController {
   constructor(private readonly basketService: BasketService) {}
 
+
   @Get(':userId')
   @ApiOperation({ summary: 'Get user basket' })
   @ApiOkResponse({ description: 'Basket retrieved successfully' })
@@ -16,10 +17,7 @@ export class BasketController {
   async getUserBasket(@Param('userId') userId: number): Promise<any> {
     try {
       const basket = await this.basketService.getUserBasket(userId);
-      if (!basket) {
-        throw HttpStatus.NOT_FOUND;
-      }
-      return basket;
+      return basket || null;
     } catch (error) {
       console.error('Error getting user basket:', error);
       throw HttpStatus.INTERNAL_SERVER_ERROR;
