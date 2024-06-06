@@ -49,7 +49,7 @@ export class ProductsController {
   @ApiOperation({ summary: 'Get a product by ID' })
   @ApiResponse({ status: 200, description: 'Product found', type: Product })
   @ApiResponse({ status: 404, description: 'Product not found', type: ErrorResponseDto })
-  @Get(':id')
+  @Get('details/:id')
   async findOne(@Param('id') id: number) {
     const product = await this.productsService.findOne(id);
     if (!product) {
@@ -63,7 +63,7 @@ export class ProductsController {
 
 
   @ApiOperation({ summary: 'Get products by filter' })
-  @ApiResponse({ status: 200, description: 'List of products matching the filter', type: [Product] })
+  @ApiResponse({ status: 200, description: 'List of products matching the filter' })
   @Get('filter')
   async findByFilter(
     @Query('genderId') genderId: number,
@@ -72,8 +72,9 @@ export class ProductsController {
     @Query('colorId') colorId: number,
     @Query('priceMin') priceMin: number,
     @Query('priceMax') priceMax: number,
-    @Query('collectionName') collectionName: string,
+    @Query('collectionName') collectionId: number,
   ) {
+
     return this.productsService.findByFilter({
       genderId,
       categoryId,
@@ -81,7 +82,7 @@ export class ProductsController {
       colorId,
       priceMin,
       priceMax,
-      collectionName,
+      collectionId,
     });
   }
 }

@@ -89,27 +89,15 @@ export class ProductsService {
       include: [
         Category,
         SpBrand,
-        {
-          model: ProductColor,
-          attributes: ['colorId'], // Only fetch the colorId
-          include: [{ model: SpColorPalitry, attributes: ['color'] }]
-        },
-        {
-          model: ProductSize,
-          attributes: ['sizeId'], // Only fetch the sizeId
-          include: [{ model: SpSizeRate, attributes: ['sizeName'] }]
-        },
-        ProductRecommendation,
         ProductPhoto,
       ],
     }).then(products => {
       return products.map(product => ({
         ...product.get(),
-        colors: product.colors.map(color => color.color.color),
-        sizes: product.sizes.map(size => size.size.sizeName),
       }));
     });
   }
+
 
   findOne(id: number) {
     return this.productModel.findByPk(id, {
@@ -144,7 +132,8 @@ export class ProductsService {
 
   async findByFilter(filters: any): Promise<any> {
     try {
-      const { genderId, categoryId, sizeId, colorId, priceMin, priceMax, collectionName } = filters;
+      const { genderId, categoryId, sizeId, colorId, priceMin, priceMax, collectionId } = filters;
+      console.log(filters);
 
       const where: any = {};
 
@@ -174,23 +163,24 @@ export class ProductsService {
         }
       }
 
-      if (collectionName) {
-        where['$brand.collectionName$'] = collectionName;
+      if (collectionId) {
+        where['$brand.collectionId$'] = collectionId;
       }
 
-      const products = await this.productModel.findAll({
+      console.log(where);
+      const products = await Product.findAll({
         where,
         include: [
           { association: 'category' },
           { association: 'gender' },
           {
             model: ProductSize,
-            attributes: ['sizeId'], // Only fetch the sizeId
+            attributes: ['sizeId'],
             include: [{ model: SpSizeRate, attributes: ['sizeName'] }]
           },
           {
             model: ProductColor,
-            attributes: ['colorId'], // Only fetch the colorId
+            attributes: ['colorId'],
             include: [{ model: SpColorPalitry, attributes: ['color'] }]
           },
           { association: 'brand' },
@@ -203,6 +193,7 @@ export class ProductsService {
         colors: product.colors.map(color => color.color.color),
         sizes: product.sizes.map(size => size.size.sizeName),
       }));
+
     } catch (error) {
       throw new HttpException('Internal Server Error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
