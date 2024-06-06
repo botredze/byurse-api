@@ -1,5 +1,5 @@
-import { Body, Controller, HttpStatus, Post } from "@nestjs/common";
-import { ApiBadRequestResponse, ApiInternalServerErrorResponse, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger"; // Импорт необходимых декораторов Swagger
+import { Body, Controller, HttpStatus, Get, Param, Post } from "@nestjs/common";
+import { ApiBadRequestResponse, ApiInternalServerErrorResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { BasketService } from "./basket.service";
 import { AddItemDto } from "./dto/add-item.dto";
 
@@ -8,11 +8,29 @@ import { AddItemDto } from "./dto/add-item.dto";
 export class BasketController {
   constructor(private readonly basketService: BasketService) {}
 
+  @Get(':userId')
+  @ApiOperation({ summary: 'Get user basket' })
+  @ApiOkResponse({ description: 'Basket retrieved successfully' })
+  @ApiNotFoundResponse({ description: 'Basket not found' })
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
+  async getUserBasket(@Param('userId') userId: number): Promise<any> {
+    try {
+      const basket = await this.basketService.getUserBasket(userId);
+      if (!basket) {
+        throw HttpStatus.NOT_FOUND;
+      }
+      return basket;
+    } catch (error) {
+      console.error('Error getting user basket:', error);
+      throw HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+  }
+
   @Post('addItem')
-  @ApiOperation({ summary: 'Add item to basket' }) // Описание операции
-  @ApiOkResponse({ description: 'Item added to basket successfully' }) // Успешный ответ
-  @ApiBadRequestResponse({ description: 'Bad request' }) // Ответ при некорректном запросе
-  @ApiInternalServerErrorResponse({ description: 'Internal server error' }) // Ответ при внутренней ошибке сервера
+  @ApiOperation({ summary: 'Add item to basket' })
+  @ApiOkResponse({ description: 'Item added to basket successfully' })
+  @ApiBadRequestResponse({ description: 'Bad request' })
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
   async addItemToBasket(@Body() addItemDto: AddItemDto): Promise<any> {
     try {
       await this.basketService.addItemToBasket(addItemDto.userId, addItemDto.productId);

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Basket } from "../database/models/basket.model";
 import { BasketItem } from "../database/models/basket-item.model";
 
@@ -17,5 +17,13 @@ export class BasketService {
       console.error('Error adding item to basket:', error);
       throw error;
     }
+  }
+
+  async getUserBasket(userId: number): Promise<Basket> {
+    const basket = await Basket.findOne({ where: { userId }, include: [BasketItem] });
+    if (!basket) {
+      throw new NotFoundException('Basket not found');
+    }
+    return basket;
   }
 }
