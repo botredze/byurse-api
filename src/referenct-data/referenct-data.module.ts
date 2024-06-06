@@ -7,10 +7,11 @@ import { SpGender } from '../database/models/sp-gender.model';
 import { SpSizeRate } from '../database/models/sp-size-rate.model';
 import { ReferenceDataController } from "./referenct-data.controller";
 import { ReferenceDataService } from "./referenct-data.service";
+import { Product } from "../database/models/product.model";
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([Category, SpColorPalitry, SpBrand, SpGender, SpSizeRate]),
+    SequelizeModule.forFeature([Category, SpColorPalitry, SpBrand, SpGender, SpSizeRate, Product]),
   ],
   controllers: [ReferenceDataController],
   providers: [ReferenceDataService],
