@@ -10,7 +10,7 @@ export class ProductDetails extends Model<ProductDetails> {
   @Column({ type: DataType.INTEGER, allowNull: false })
   productId: number;
 
-  @Column({ type: DataType.STRING, allowNull: false })
+  @Column({ type: DataType.TEXT, allowNull: false })
   description: string;
 
   @Column({ type: DataType.STRING, allowNull: false })

@@ -12,4 +12,7 @@ export class ProductPhoto extends Model<ProductPhoto> {
 
   @Column({ type: DataType.STRING, allowNull: false })
   url: string;
+
+  @Column({ type: DataType.BOOLEAN })
+  main: boolean
 }
