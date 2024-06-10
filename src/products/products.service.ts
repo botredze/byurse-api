@@ -245,7 +245,6 @@ export class ProductsService {
       });
 
       const prices = await Product.findAll({
-        where,
         attributes: [
           [Sequelize.fn('MIN', Sequelize.col('price')), 'minPrice'],
           [Sequelize.fn('MAX', Sequelize.col('price')), 'maxPrice']

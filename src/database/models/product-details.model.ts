@@ -21,4 +21,7 @@ export class ProductDetails extends Model<ProductDetails> {
 
   @Column({ type: DataType.STRING, allowNull: false })
   articul: string;
+
+  @Column({ type: DataType.STRING, allowNull: false })
+  complect: string;
 }
