@@ -11,6 +11,7 @@ import { ProductDetails } from "../database/models/product-details.model";
 import { ProductPhoto } from "../database/models/product-photo.model";
 import { S3Service } from "../s3/s3.service";
 import { S3Module } from "../s3/s3.module";
+import { Rating } from "../database/models/rating.model";
 
 
 @Module({
@@ -23,7 +24,8 @@ import { S3Module } from "../s3/s3.module";
       ProductSize,
       ProductRecommendation,
       ProductDetails,
-      ProductPhoto
+      ProductPhoto,
+      Rating
     ]),
     S3Module
   ],

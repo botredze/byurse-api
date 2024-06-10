@@ -26,6 +26,7 @@ export class ProductsService {
     @InjectModel(ProductDetails) private readonly productDetailsModel: typeof ProductDetails,
     @InjectModel(ProductRecommendation) private readonly productRecommendationModel: typeof ProductRecommendation,
     @InjectModel(ProductPhoto) private readonly productPhotoModel: typeof ProductPhoto,
+    @InjectModel(Rating) private readonly ratingModel: typeof Rating,
     private readonly s3Service: S3Service
   ) {
   }
@@ -49,7 +50,6 @@ export class ProductsService {
     console.log(data);
     const { colors, sizes, recommendations, photos, ...productData } = data;
 
-    // Manually reconstruct the details object
     const details = {
       description: data['details.description'],
       material: data['details.material'],
@@ -58,6 +58,8 @@ export class ProductsService {
 
     try {
       const product = await this.productModel.create(productData);
+
+      await this.ratingModel.create({ productId: product.id, rate: 10 });
 
       if (details) {
         const articul = this.generateArticul();
@@ -85,6 +87,7 @@ export class ProductsService {
           }))
         );
       }
+
 
       if (files && files.length > 0) {
         const photoUploads = await Promise.all(files.map(file =>
