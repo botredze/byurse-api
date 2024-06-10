@@ -167,7 +167,7 @@ export class ProductsService {
 
       const where: any = {};
 
-      console.log(genderId, categoryId, sizeId, colorId, priceMin, priceMax, collectionId);
+      console.log(genderId, categoryId, sizeId, colorId, priceMin, priceMax, collectionId, sorting);
       if (genderId != 0 && genderId) {
         where.genderId = genderId;
       }
@@ -198,16 +198,17 @@ export class ProductsService {
         where.brandId = collectionId;
       }
 
-      const sortCriteria = [];
-      if (sorting && sorting != 0 ) {
-        switch (sorting) {
-          case 1:
+      let sortCriteria = [];
+      if (sorting) {
+        console.log(typeof  sorting);
+        switch (sorting ) {
+          case '1':
             sortCriteria.push(['price', 'ASC']);
             break;
-          case 2:
-            sortCriteria.push([Sequelize.col('rating.rating'), 'DESC']);
+          case '2':
+            sortCriteria.push([Sequelize.col('rate'), 'DESC']);
             break;
-          case 3:
+          case '3':
             sortCriteria.push(['createdAt', 'DESC']);
             break;
           default:
@@ -234,7 +235,7 @@ export class ProductsService {
           { association: "photos" },
           {
             model: Rating,
-            attributes: ["rating"]
+            attributes: ["rate"]
           }
         ],
         order: sortCriteria
@@ -256,7 +257,7 @@ export class ProductsService {
           ...product.get(),
           colors: product.colors.map(color => ({ id: color.colorId, color: color.color.color })),
           sizes: product.sizes.map(size => ({ id: size.sizeId, sizeName: size.size.sizeName })),
-          rating: product.rating ? product.rating : null
+          rating: product.rating.rate ? product.rating.rate : null
         })),
         minPrice,
         maxPrice
@@ -265,6 +266,7 @@ export class ProductsService {
       return result;
 
     } catch (error) {
+      console.log(error);
       throw new HttpException("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
