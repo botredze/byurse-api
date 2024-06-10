@@ -150,7 +150,8 @@ export class ProductsService {
           include: [{ model: SpSizeRate, attributes: ["id", "sizeName"] }]
         },
         ProductRecommendation,
-        ProductPhoto
+        ProductPhoto,
+        ProductDetails
       ]
     }).then(product => {
       if (product) {
