@@ -14,6 +14,8 @@ import { S3Service } from "../s3/s3.service";
 import { SpColorPalitry } from "../database/models/sp-color-palitry.model";
 import { SpSizeRate } from "../database/models/sp-size-rate.model";
 import { plainToClass } from "class-transformer";
+import { Sequelize } from "sequelize-typescript";
+import { Rating } from "../database/models/rating.model";
 
 @Injectable()
 export class ProductsService {
@@ -28,14 +30,38 @@ export class ProductsService {
   ) {
   }
 
+   generateArticul() {
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const numbers = '0123456789';
+
+    let result = '';
+    for (let i = 0; i < 3; i++) {
+      result += letters.charAt(Math.floor(Math.random() * letters.length));
+    }
+    for (let i = 0; i < 7; i++) {
+      result += numbers.charAt(Math.floor(Math.random() * numbers.length));
+    }
+    return result;
+  }
+
+
   async createProduct(data: CreateProductDto, files: Express.Multer.File[]): Promise<Product> {
-    const { colors, sizes, recommendations, details, photos, ...productData } = data;
+    console.log(data);
+    const { colors, sizes, recommendations, photos, ...productData } = data;
+
+    // Manually reconstruct the details object
+    const details = {
+      description: data['details.description'],
+      material: data['details.material'],
+      country: data['details.country']
+    };
 
     try {
       const product = await this.productModel.create(productData);
 
       if (details) {
-        await this.productDetailsModel.create({ ...details, productId: product.id });
+        const articul = this.generateArticul();
+        await this.productDetailsModel.create({ ...details, productId: product.id, articul });
       }
 
       if (colors && colors.length > 0) {
@@ -50,7 +76,8 @@ export class ProductsService {
         );
       }
 
-      if (recommendations && recommendations.length > 0) {
+      console.log(recommendations && recommendations.length > 1);
+      if (recommendations && recommendations.length > 1) {
         await this.productRecommendationModel.bulkCreate(
           recommendations.map(recommendedProductId => ({
             productId: product.id,
@@ -65,25 +92,29 @@ export class ProductsService {
         ));
 
         await this.productPhotoModel.bulkCreate(
-          photoUploads.map(url => ({
+          photoUploads.map((url, index) => ({
             productId: product.id,
-            url
+            url,
+            main: index === 0
           }))
         );
       } else if (photos && photos.length > 0) {
         await this.productPhotoModel.bulkCreate(
-          photos.map(url => ({
+          photos.map((url, index) => ({
             productId: product.id,
-            url
+            url,
+            main: index === 0
           }))
         );
       }
 
       return product;
     } catch (error) {
+      console.log('error', error);
       throw new HttpException("Failed to create product", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
 
   findAll() {
     return this.productModel.findAll({
@@ -132,7 +163,7 @@ export class ProductsService {
 
   async findByFilter(filters: any): Promise<any> {
     try {
-      const { genderId, categoryId, sizeId, colorId, priceMin, priceMax, collectionId } = filters;
+      const { genderId, categoryId, sizeId, colorId, priceMin, priceMax, collectionId, sorting } = filters;
 
       const where: any = {};
 
@@ -167,6 +198,23 @@ export class ProductsService {
         where.brandId = collectionId;
       }
 
+      const sortCriteria = [];
+      if (sorting) {
+        switch (sorting) {
+          case 1:
+            sortCriteria.push(['price', 'ASC']);
+            break;
+          case 2:
+            sortCriteria.push([Sequelize.col('rating.rating'), 'DESC']);
+            break;
+          case 3:
+            sortCriteria.push(['createdAt', 'DESC']);
+            break;
+          default:
+            break;
+        }
+      }
+
       const products = await Product.findAll({
         where,
         include: [
@@ -183,22 +231,43 @@ export class ProductsService {
             include: [{ model: SpColorPalitry, attributes: ["id", "color"] }]
           },
           { association: "brand" },
-          { association: "photos" }
+          { association: "photos" },
+          {
+            model: Rating,
+            attributes: ["rating"]
+          }
         ],
-        order: [["price", "ASC"]]
+        order: sortCriteria
       });
 
-      return products.map(product => ({
-        ...product.get(),
-        colors: product.colors.map(color => ({ id: color.colorId, color: color.color.color })),
-        sizes: product.sizes.map(size => ({ id: size.sizeId, sizeName: size.size.sizeName }))
-      }));
+      const prices = await Product.findAll({
+        where,
+        attributes: [
+          [Sequelize.fn('MIN', Sequelize.col('price')), 'minPrice'],
+          [Sequelize.fn('MAX', Sequelize.col('price')), 'maxPrice']
+        ]
+      });
+
+      const minPrice = prices[0].get('minPrice');
+      const maxPrice = prices[0].get('maxPrice');
+
+      const result = {
+        products: products.map(product => ({
+          ...product.get(),
+          colors: product.colors.map(color => ({ id: color.colorId, color: color.color.color })),
+          sizes: product.sizes.map(size => ({ id: size.sizeId, sizeName: size.size.sizeName })),
+          rating: product.rating ? product.rating : null
+        })),
+        minPrice,
+        maxPrice
+      };
+
+      return result;
 
     } catch (error) {
       throw new HttpException("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-
 
 
 }

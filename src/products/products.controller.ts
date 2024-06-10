@@ -22,7 +22,7 @@ import { FilesInterceptor } from "@nestjs/platform-express";
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  @Post()
+  @Post('create')
   @ApiOperation({ summary: 'Create a new product' })
   @ApiResponse({ status: 201, description: 'The product has been successfully created.' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
@@ -33,8 +33,10 @@ export class ProductsController {
     @UploadedFiles() files: Express.Multer.File[],
   ): Promise<Product> {
     try {
+      console.log(createProductDto, files);
       return await this.productsService.createProduct(createProductDto, files);
     } catch (error) {
+      console.log('error', error);
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -73,6 +75,7 @@ export class ProductsController {
     @Query('priceMin') priceMin: number,
     @Query('priceMax') priceMax: number,
     @Query('collectionName') collectionId: number,
+    @Query('sorting') sorting: number
   ) {
 
     return this.productsService.findByFilter({
@@ -83,6 +86,7 @@ export class ProductsController {
       priceMin,
       priceMax,
       collectionId,
+      sorting
     });
   }
 }
