@@ -199,7 +199,7 @@ export class ProductsService {
       }
 
       const sortCriteria = [];
-      if (sorting) {
+      if (sorting && sorting != 0 ) {
         switch (sorting) {
           case 1:
             sortCriteria.push(['price', 'ASC']);
