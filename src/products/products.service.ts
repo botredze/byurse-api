@@ -31,11 +31,11 @@ export class ProductsService {
   ) {
   }
 
-   generateArticul() {
-    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const numbers = '0123456789';
+  generateArticul() {
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const numbers = "0123456789";
 
-    let result = '';
+    let result = "";
     for (let i = 0; i < 3; i++) {
       result += letters.charAt(Math.floor(Math.random() * letters.length));
     }
@@ -51,9 +51,9 @@ export class ProductsService {
     const { colors, sizes, recommendations, photos, ...productData } = data;
 
     const details = {
-      description: data['details.description'],
-      material: data['details.material'],
-      country: data['details.country']
+      description: data["details.description"],
+      material: data["details.material"],
+      country: data["details.country"]
     };
 
     try {
@@ -113,7 +113,7 @@ export class ProductsService {
 
       return product;
     } catch (error) {
-      console.log('error', error);
+      console.log("error", error);
       throw new HttpException("Failed to create product", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -132,6 +132,59 @@ export class ProductsService {
       }));
     });
   }
+
+  // findOne(id: number) {
+  //   return this.productModel.findByPk(id, {
+  //     include: [
+  //       Category,
+  //       SpBrand,
+  //       {
+  //         model: ProductColor,
+  //         attributes: ["colorId"],
+  //         include: [{ model: SpColorPalitry, attributes: ["id", "color"] }]
+  //       },
+  //       {
+  //         model: ProductSize,
+  //         attributes: ["sizeId"],
+  //         include: [{ model: SpSizeRate, attributes: ["id", "sizeName"] }]
+  //       },
+  //       {
+  //         model: ProductRecommendation,
+  //         include: [
+  //           {
+  //             model: Product,
+  //             as: 'recommendedProduct',
+  //             include: [
+  //               Category,
+  //               ProductPhoto
+  //             ]
+  //           }
+  //         ]
+  //       },
+  //       ProductPhoto
+  //     ]
+  //   }).then(product => {
+  //     if (product) {
+  //       return {
+  //         ...product.get(),
+  //         colors: product.colors.map(color => ({
+  //           id: color.colorId,
+  //           color: color.color
+  //         })),
+  //         sizes: product.sizes.map(size => ({
+  //           id: size.sizeId,
+  //           sizeName: size.size
+  //         })),
+  //         recommendations: product.recommendations.map(rec => ({
+  //           ...rec.recommendedProduct.get(),
+  //           category: rec.recommendedProduct.category,
+  //           photos: rec.recommendedProduct.photos
+  //         }))
+  //       };
+  //     }
+  //     return null;
+  //   });
+  // }
 
   findOne(id: number) {
     return this.productModel.findByPk(id, {
@@ -153,7 +206,7 @@ export class ProductsService {
           include: [
             {
               model: Product,
-              as: 'recommendedProduct',
+              as: "recommendedProduct",
               include: [
                 Category,
                 ProductPhoto
@@ -161,20 +214,16 @@ export class ProductsService {
             }
           ]
         },
-        ProductPhoto
+        // ProductRecommendation,
+        ProductPhoto,
+        ProductDetails
       ]
     }).then(product => {
       if (product) {
         return {
           ...product.get(),
-          colors: product.colors.map(color => ({
-            id: color.colorId,
-            color: color.color
-          })),
-          sizes: product.sizes.map(size => ({
-            id: size.sizeId,
-            sizeName: size.size
-          })),
+          colors: product.colors.map(color => ({ id: color.colorId, color: color.color.color })),
+          sizes: product.sizes.map(size => ({ id: size.sizeId, sizeName: size.size.sizeName })),
           recommendations: product.recommendations.map(rec => ({
             ...rec.recommendedProduct.get(),
             category: rec.recommendedProduct.category,
@@ -185,7 +234,6 @@ export class ProductsService {
       return null;
     });
   }
-
 
 
   async findByFilter(filters: any): Promise<any> {
@@ -227,16 +275,16 @@ export class ProductsService {
 
       let sortCriteria = [];
       if (sorting) {
-        console.log(typeof  sorting);
-        switch (sorting ) {
-          case '1':
-            sortCriteria.push(['price', 'ASC']);
+        console.log(typeof sorting);
+        switch (sorting) {
+          case "1":
+            sortCriteria.push(["price", "ASC"]);
             break;
-          case '2':
-            sortCriteria.push([Sequelize.col('rate'), 'DESC']);
+          case "2":
+            sortCriteria.push([Sequelize.col("rate"), "DESC"]);
             break;
-          case '3':
-            sortCriteria.push(['createdAt', 'DESC']);
+          case "3":
+            sortCriteria.push(["createdAt", "DESC"]);
             break;
           default:
             break;
@@ -270,13 +318,13 @@ export class ProductsService {
 
       const prices = await Product.findAll({
         attributes: [
-          [Sequelize.fn('MIN', Sequelize.col('price')), 'minPrice'],
-          [Sequelize.fn('MAX', Sequelize.col('price')), 'maxPrice']
+          [Sequelize.fn("MIN", Sequelize.col("price")), "minPrice"],
+          [Sequelize.fn("MAX", Sequelize.col("price")), "maxPrice"]
         ]
       });
 
-      const minPrice = prices[0].get('minPrice');
-      const maxPrice = prices[0].get('maxPrice');
+      const minPrice = prices[0].get("minPrice");
+      const maxPrice = prices[0].get("maxPrice");
 
       const result = {
         products: products.map(product => ({
