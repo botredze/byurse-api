@@ -133,7 +133,6 @@ export class ProductsService {
     });
   }
 
-
   findOne(id: number) {
     return this.productModel.findByPk(id, {
       include: [
@@ -149,21 +148,45 @@ export class ProductsService {
           attributes: ["sizeId"],
           include: [{ model: SpSizeRate, attributes: ["id", "sizeName"] }]
         },
-        ProductRecommendation,
-        ProductPhoto,
-        ProductDetails
+        {
+          model: ProductRecommendation,
+          include: [
+            {
+              model: Product,
+              as: 'recommendedProduct',
+              include: [
+                Category,
+                ProductPhoto
+              ]
+            }
+          ]
+        },
+        ProductPhoto
       ]
     }).then(product => {
       if (product) {
         return {
           ...product.get(),
-          colors: product.colors.map(color => ({ id: color.colorId, color: color.color.color })),
-          sizes: product.sizes.map(size => ({ id: size.sizeId, sizeName: size.size.sizeName }))
+          colors: product.colors.map(color => ({
+            id: color.colorId,
+            color: color.color
+          })),
+          sizes: product.sizes.map(size => ({
+            id: size.sizeId,
+            sizeName: size.size
+          })),
+          recommendations: product.recommendations.map(rec => ({
+            ...rec.recommendedProduct.get(),
+            category: rec.recommendedProduct.category,
+            photos: rec.recommendedProduct.photos
+          }))
         };
       }
       return null;
     });
   }
+
+
 
   async findByFilter(filters: any): Promise<any> {
     try {
