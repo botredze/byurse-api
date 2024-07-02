@@ -45,6 +45,9 @@ export class Product extends Model<Product> {
   @Column({ type: DataType.INTEGER, allowNull: false })
   position: number;
 
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  type: number;
+
   @ForeignKey(() => SpGender)
   @Column({ type: DataType.INTEGER, allowNull: false })
   genderId: number;

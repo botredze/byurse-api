@@ -1,4 +1,4 @@
-import { Body, Controller, HttpStatus, Get, Param, Post } from "@nestjs/common";
+import { Body, Controller, HttpStatus, Get, Param, Post, Delete } from "@nestjs/common";
 import { ApiBadRequestResponse, ApiInternalServerErrorResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { BasketService } from "./basket.service";
 import { AddItemDto } from "./dto/add-item.dto";
@@ -7,7 +7,6 @@ import { AddItemDto } from "./dto/add-item.dto";
 @Controller('basket')
 export class BasketController {
   constructor(private readonly basketService: BasketService) {}
-
 
   @Get(':userId')
   @ApiOperation({ summary: 'Get user basket' })
@@ -31,10 +30,25 @@ export class BasketController {
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
   async addItemToBasket(@Body() addItemDto: AddItemDto): Promise<any> {
     try {
-      await this.basketService.addItemToBasket(addItemDto.userId, addItemDto.productId);
+      await this.basketService.addItemToBasket(addItemDto.userId, addItemDto.productId, addItemDto.colorId, addItemDto.sizeId);
       return { message: 'Item added to basket successfully' };
     } catch (error) {
       console.error('Error adding item to basket:', error);
+      throw HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+  }
+
+  @Delete(':userId/item/:itemId')
+  @ApiOperation({ summary: 'Remove item from basket' })
+  @ApiOkResponse({ description: 'Item removed from basket successfully' })
+  @ApiNotFoundResponse({ description: 'Basket or item not found' })
+  @ApiInternalServerErrorResponse({ description: 'Internal server error' })
+  async removeItemFromBasket(@Param('userId') userId: number, @Param('itemId') itemId: number): Promise<any> {
+    try {
+      await this.basketService.removeItemFromBasket(userId, itemId);
+      return { message: 'Item removed from basket successfully' };
+    } catch (error) {
+      console.error('Error removing item from basket:', error);
       throw HttpStatus.INTERNAL_SERVER_ERROR;
     }
   }

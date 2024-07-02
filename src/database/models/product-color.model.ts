@@ -1,6 +1,8 @@
-import { Column, Model, Table, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
+import { Column, Model, Table, DataType, ForeignKey, BelongsTo, HasMany } from "sequelize-typescript";
 import { Product } from './product.model';
 import { SpColorPalitry } from './sp-color-palitry.model';
+import { BasketItem } from "./basket-item.model";
+import { FavoriteProduct } from "./favorite.model";
 
 @Table({ tableName: 'product_colors' })
 export class ProductColor extends Model<ProductColor> {
@@ -17,4 +19,10 @@ export class ProductColor extends Model<ProductColor> {
 
   @BelongsTo(() => SpColorPalitry)
   color: SpColorPalitry;
+
+  @HasMany(() => BasketItem)
+  basketItems: BasketItem[];
+
+  @HasMany(() => FavoriteProduct)
+  favorite: FavoriteProduct[];
 }
